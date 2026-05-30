@@ -1,12 +1,34 @@
 #!/bin/bash
 
-#  Takes downloaded proxy list from sites like
-#  https://proxyscrape.com/free-proxy-list
-#  It changes the format from the downloaded
-#  format to the format you can add to proxychains.conf
-#  
-#  From : socks5://72.56.80.241:1080
-#  To : socks5 72.56.80.241 1080
+# Clear the screen first to make the banner pop
+clear
+
+# Display MaDMaX Version 1.0 Custom ASCII Banner
+cat << 'EOF'
+╔═══════════════════════════════════════════════════════════════════════════╗
+ ║                                                                           ║
+ ║                                                                           ║
+ ║                                                                           ║
+ ║     ________                                            ___      ___      ║
+ ║     `MMMMMMMb.                                          `MM      `MM      ║
+ ║      MM    `Mb                                           MM       MM      ║
+ ║      MM     MM ___  __   _____  ____   ___   ___     ____MM   ____MM      ║
+ ║      MM     MM `MM 6MM  6MMMMMb `MM(   )P' 6MMMMb   6MMMMMM  6MMMMMM      ║
+ ║      MM    .M9  MM69 " 6M'   `Mb `MM` ,P  8M'  `Mb 6M'  `MM 6M'  `MM      ║
+ ║      MMMMMMM9'  MM'    MM     MM  `MM,P       ,oMM MM    MM MM    MM      ║
+ ║      MM         MM     MM     MM   `MM.   ,6MM9'MM MM    MM MM    MM      ║
+ ║      MM         MM     MM     MM   d`MM.  MM'   MM MM    MM MM    MM      ║
+ ║      MM         MM     YM.   ,M9  d' `MM. MM.  ,MM YM.  ,MM YM.  ,MM      ║
+ ║     _MM_       _MM_     YMMMMM9 _d_  _)MM_`YMMM9'Yb.YMMMMMM_ YMMMMMM_     ║
+ ║                                                                           ║
+ ║                   ___  _ _ .                                              ║
+ ║                   |==]  Y  .                                              ║
+ ║                              _  _ ____ ___  _  _ ____ _ _                 ║
+ ║                              |\/| |--| |__> |\/| |--| _X_                 ║
+ ║                                                                           ║
+ ╚═══════════════════════════════════════════════════════════════════════════╝
+EOF
+echo "" # Empty spacing line for clean layout
 
 # 1. Get and validate the input proxy list
 echo -n "Enter the path to the input proxy file: "
@@ -42,8 +64,8 @@ if [ "$proxy_count" -gt "$total_lines" ]; then
 fi
 
 # 5. Process, format, limit count, and append to the configuration file
-# Note: This might require 'sudo' permissions depending on where your conf file lives.
 echo "" >> "$conf_file" # Adds a newline visual buffer to the end of the conf file
 head -n "$proxy_count" "$input_file" | sed -E 's|://| |g; s|:| |g' >> "$conf_file"
 
+echo ""
 echo "Success! Appended $proxy_count formatted proxies to: $conf_file"
