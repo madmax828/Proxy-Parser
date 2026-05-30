@@ -1,6 +1,9 @@
-# ___  ____ ____ _ _ ____ ___  ___ 
-# |--' |--< [__] _X_ |--| |__> |__>
-#
+# ░█▀█░█▀▄░█▀█░█░█░█▀█░█▀▄░█▀▄
+# ░█▀▀░█▀▄░█░█░▄▀▄░█▀█░█░█░█░█
+# ░▀░░░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀░░▀▀░
+# ░░░░░░░░                    
+# ░░░░░░░░                    
+
 # Proxychains Aggregator (proxadd.sh)
 
 A lightweight interactive automation script designed to parse, reformat, and cleanly append downloaded raw proxy lists directly into Proxychains configuration profiles. 
