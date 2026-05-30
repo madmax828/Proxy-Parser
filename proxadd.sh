@@ -67,5 +67,9 @@ fi
 echo "" >> "$conf_file" # Adds a newline visual buffer to the end of the conf file
 head -n "$proxy_count" "$input_file" | sed -E 's|://| |g; s|:| |g' >> "$conf_file"
 
+# 5. Process, format, limit count, and append to the configuration file
+echo "" >> "$conf_file" # Adds a newline visual buffer to the end of the conf file
+head -n "$proxy_count" "$input_file" | sed -E 's|://| |g; s|:| |g' >> "$conf_file"
 echo ""
-echo "Success! Appended $proxy_count formatted proxies to: $conf_file"
+echo -e "\e[36mOK! WE ARE READY TO USE SOME PROXY-FU AND DISAPPEAR IN THE NOISE! 🥋🥷💨\e[0m"
+echo -e "\e[32mSuccess! Appended $proxyCount formatted proxies to: $conf_file ✅\e[0m"
