@@ -1,26 +1,6 @@
-# ╔═══════════════════════════════════════════════════════════════════════════╗
-# ║                                                                           ║
-# ║                                                                           ║
-# ║                                                                           ║
-# ║     ________                                            ___      ___      ║
-# ║     `MMMMMMMb.                                          `MM      `MM      ║
-# ║      MM    `Mb                                           MM       MM      ║
-# ║      MM     MM ___  __   _____  ____   ___   ___     ____MM   ____MM      ║
-# ║      MM     MM `MM 6MM  6MMMMMb `MM(   )P' 6MMMMb   6MMMMMM  6MMMMMM      ║
-# ║      MM    .M9  MM69 " 6M'   `Mb `MM` ,P  8M'  `Mb 6M'  `MM 6M'  `MM      ║
-# ║      MMMMMMM9'  MM'    MM     MM  `MM,P       ,oMM MM    MM MM    MM      ║
-# ║      MM         MM     MM     MM   `MM.   ,6MM9'MM MM    MM MM    MM      ║
-# ║      MM         MM     MM     MM   d`MM.  MM'   MM MM    MM MM    MM      ║
-# ║      MM         MM     YM.   ,M9  d' `MM. MM.  ,MM YM.  ,MM YM.  ,MM      ║
-# ║     _MM_       _MM_     YMMMMM9 _d_  _)MM_`YMMM9'Yb.YMMMMMM_ YMMMMMM_     ║
-# ║                                                                           ║
-# ║                   ___  _ _ .                                              ║
-# ║                   |==]  Y  .                                              ║ 
-# ║                              _  _ ____ ___  _  _ ____ _ _                 ║
-# ║                              |\/| |--| |__> |\/| |--| _X_║                ║
-# ║                                                                           ║
-# ╚═══════════════════════════════════════════════════════════════════════════╝
-
+# ___  ____ ____ _ _ ____ ___  ___ 
+# |--' |--< [__] _X_ |--| |__> |__>
+#
 # Proxychains Aggregator (proxadd.sh)
 
 A lightweight interactive automation script designed to parse, reformat, and cleanly append downloaded raw proxy lists directly into Proxychains configuration profiles. 
