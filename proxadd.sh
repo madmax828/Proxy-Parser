@@ -28,18 +28,42 @@ cat << 'EOF'
  ║                                                                           ║
  ╚═══════════════════════════════════════════════════════════════════════════╝
 EOF
-echo "" # Empty spacing line for clean layout
+echo "" 
 
-# 1. Get and validate the input proxy list
-echo -n "Enter the path to the input proxy file: "
-read -r input_file
+# Define temporary runtime workspace file
+temp_raw_list="/tmp/raw_proxies.txt"
 
-if [ ! -f "$input_file" ]; then
-    echo "Error: File '$input_file' does not exist!"
+# 1. Ask user for data sourcing method
+echo "Select proxy sourcing method:"
+echo " [1] Download fresh proxies from ProxyScrape API"
+echo " [2] Parse an existing local file list"
+echo -n "Choose an option (1 or 2): "
+read -r source_choice
+
+if [ "$source_choice" = "1" ]; then
+    echo -n "Fetching proxies from ProxyScrape API..."
+    # Execute the curl request, silencing tracking bars but displaying system break notifications
+    curl -s --request GET --url 'https://api.proxyscrape.com/v4/free-proxy-list/get?protocol=all&timeout=10000&country=all&ssl=all&anonymity=all&limit=2000' -o "$temp_raw_list"
+    
+    if [ ! -s "$temp_raw_list" ]; then
+        echo "Error: API download failed or returned an empty file!"
+        exit 1
+    fi
+    echo " Download complete!"
+    input_file="$temp_raw_list"
+elif [ "$source_choice" = "2" ]; then
+    echo -n "Enter the path to your input proxy file: "
+    read -r input_file
+    if [ ! -f "$input_file" ]; then
+        echo "Error: File '$input_file' does not exist!"
+        exit 1
+    fi
+else
+    echo "Invalid choice. Exiting script."
     exit 1
 fi
 
-# 2. Get the config file path (Defaults to /etc/proxychains4.conf on empty Enter)
+# 2. Get the config file path (Defaults to /etc/proxychains4.conf)
 echo -n "Enter the path to the conf file [/etc/proxychains4.conf]: "
 read -r conf_file
 if [ -z "$conf_file" ]; then
@@ -50,26 +74,27 @@ fi
 echo -n "How many proxies do you want to add? "
 read -r proxy_count
 
-# Validate that the input is a positive number
+# Validate numbers
 if ! [[ "$proxy_count" =~ ^[0-9]+$ ]] || [ "$proxy_count" -le 0 ]; then
     echo "Error: Please enter a valid number greater than 0."
     exit 1
 fi
 
-# 4. Check total lines in proxy file to ensure we don't request too many
+# 4. Check boundaries
 total_lines=$(wc -l < "$input_file")
 if [ "$proxy_count" -gt "$total_lines" ]; then
-    echo "Warning: You requested $proxy_count proxies, but only $total_lines exist. Using all available proxies."
+    echo "Warning: You requested $proxy_count proxies, but only $total_lines exist. Appending all available."
     proxy_count=$total_lines
 fi
 
-# 5. Process, format, limit count, and append to the configuration file
-echo "" >> "$conf_file" # Adds a newline visual buffer to the end of the conf file
+# 5. Process formatting, limit output counts, and clean append
+echo "" >> "$conf_file"
 head -n "$proxy_count" "$input_file" | sed -E 's|://| |g; s|:| |g' >> "$conf_file"
 
-# 5. Process, format, limit count, and append to the configuration file
-echo "" >> "$conf_file" # Adds a newline visual buffer to the end of the conf file
-head -n "$proxy_count" "$input_file" | sed -E 's|://| |g; s|:| |g' >> "$conf_file"
+# Cleanup hidden background file if used API mode
+if [ -f "$temp_raw_list" ]; then rm "$temp_raw_list"; fi
+
+# Execution Confirmation Messages
 echo ""
 echo -e "\e[36mOK! WE ARE READY TO USE SOME PROXY-FU AND DISAPPEAR IN THE NOISE! 🥋🥷💨\e[0m"
-echo -e "\e[32mSuccess! Appended $proxyCount formatted proxies to: $conf_file ✅\e[0m"
+echo -e "\e[32mSuccess! Appended $proxy_count formatted proxies to: $conf_file ✅\e[0m"
