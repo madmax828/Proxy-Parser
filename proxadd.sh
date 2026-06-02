@@ -30,26 +30,27 @@ cat << 'EOF'
 EOF
 echo "" 
 
-# Define temporary runtime workspace file
+# Define temporary runtime workspace files
 temp_raw_list="/tmp/raw_proxies.txt"
+temp_clean_list="/tmp/clean_proxies.txt"
 
 # 1. Ask user for data sourcing method
 echo "Select proxy sourcing method:"
-echo " [1] Download fresh proxies from ProxyScrape API"
-echo " [2] Parse an existing local file list"
+echo " 1) Download fresh proxies from ProxyScrape API"
+echo " 2) Parse an existing local file list"
 echo -n "Choose an option (1 or 2): "
 read -r source_choice
 
 if [ "$source_choice" = "1" ]; then
-    echo -n "Fetching proxies from ProxyScrape API..."
-    # Execute the curl request, silencing tracking bars but displaying system break notifications
-    curl -s --request GET --url 'https://api.proxyscrape.com/v4/free-proxy-list/get?protocol=all&timeout=10000&country=all&ssl=all&anonymity=all&limit=2000' -o "$temp_raw_list"
+    echo "Fetching proxies from ProxyScrape API..."
+    # Execute the curl request
+    curl -s --request GET --url 'https://proxyscrape.com' -o "$temp_raw_list"
     
     if [ ! -s "$temp_raw_list" ]; then
         echo "Error: API download failed or returned an empty file!"
         exit 1
     fi
-    echo " Download complete!"
+    echo "Download complete!"
     input_file="$temp_raw_list"
 elif [ "$source_choice" = "2" ]; then
     echo -n "Enter the path to your input proxy file: "
@@ -62,6 +63,9 @@ else
     echo "Invalid choice. Exiting script."
     exit 1
 fi
+
+# FIX: Strip Windows line endings (\r) and save to a clean temporary file
+tr -d '\r' < "$input_file" > "$temp_clean_list"
 
 # 2. Get the config file path (Defaults to /etc/proxychains4.conf)
 echo -n "Enter the path to the conf file [/etc/proxychains4.conf]: "
@@ -80,8 +84,8 @@ if ! [[ "$proxy_count" =~ ^[0-9]+$ ]] || [ "$proxy_count" -le 0 ]; then
     exit 1
 fi
 
-# 4. Check boundaries
-total_lines=$(wc -l < "$input_file")
+# 4. Check boundaries using our clean file
+total_lines=$(wc -l < "$temp_clean_list")
 if [ "$proxy_count" -gt "$total_lines" ]; then
     echo "Warning: You requested $proxy_count proxies, but only $total_lines exist. Appending all available."
     proxy_count=$total_lines
@@ -89,10 +93,11 @@ fi
 
 # 5. Process formatting, limit output counts, and clean append
 echo "" >> "$conf_file"
-head -n "$proxy_count" "$input_file" | sed -E 's|://| |g; s|:| |g' >> "$conf_file"
+head -n "$proxy_count" "$temp_clean_list" | sed -E 's|://| |g; s|:| |g' >> "$conf_file"
 
-# Cleanup hidden background file if used API mode
-if [ -f "$temp_raw_list" ]; then rm "$temp_raw_list"; fi
+# Cleanup temporary files
+[ -f "$temp_raw_list" ] && rm "$temp_raw_list"
+[ -f "$temp_clean_list" ] && rm "$temp_clean_list"
 
 # Execution Confirmation Messages
 echo ""
